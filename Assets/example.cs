@@ -37,7 +37,7 @@ public class example : MonoBehaviour {
 				string str = data.ToString();
 				// Access to Unity UI is not allowed in a background thread, so let's put into a shared variable
 				lock(chatLog) {
-					chatLog = "Socket.IO Client Got: "+str;
+					chatLog = str;
 					Debug.Log(chatLog);
 				}
 			});
