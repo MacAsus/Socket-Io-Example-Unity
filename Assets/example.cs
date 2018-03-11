@@ -7,6 +7,7 @@ public class example : MonoBehaviour {
 	public string serverURL = "http://localhost:3000";
 	protected Socket socket = null;
 	public string chatLog = "";
+	public int total = 0;
 
 	// Use this for initialization
 	void Start() {
@@ -21,6 +22,7 @@ public class example : MonoBehaviour {
 
 	void Destroy() {
 		DoClose();
+		Debug.Log ("Destroy");
 	}
 
 	void DoOpen() {
@@ -29,17 +31,21 @@ public class example : MonoBehaviour {
 			socket.On(Socket.EVENT_CONNECT, () => {
 				lock(chatLog) {
 					// Access to Unity UI is not allowed in a background thread, so let's put into a shared variable
-					chatLog = "Socket.IO Client connected.";
+					chatLog = "Conenct Success!!";
 					Debug.Log(chatLog);
+
+					for(int i=0; i < 10; i++) {
+						socket.Emit("chat", "hi");
+					}
 				}
 			});
+
 			socket.On ("chat", (data) => {
-				string str = data.ToString();
+				 string str = data.ToString();
+				 long unixTimestamp = (long)(System.DateTime.UtcNow.Subtract(new System.DateTime(1970, 1, 1))).TotalMilliseconds;
+				 long dist = unixTimestamp - long.Parse(str);
+				 Debug.Log(dist);
 				// Access to Unity UI is not allowed in a background thread, so let's put into a shared variable
-				lock(chatLog) {
-					chatLog = str;
-					Debug.Log(chatLog);
-				}
 			});
 		}
 	}
